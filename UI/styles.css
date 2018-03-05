@@ -1,24 +1,28 @@
 body {
+    width: 100%;
     font-size: 16px;
     background-color: white;
 }
 
-header {
+header { 
     margin: 0 auto;
-    width: 1200px;
-    margin-bottom: 20px;
+    width: 1400px;
+    margin-bottom: 170px;
 }
 
 h1 {
     text-shadow: 2px 2px 0 #cccccc;
 }
 
+.user {
+    float: left;
+    margin-left: 100px;
+}
+
 .filter {
     width: 300px;  
-    float: left; 
-    position: relative; 
-    top: -130px; 
-    left: 1000px; 
+    float: right; 
+    position: relative;  
 }
 
 .filter input {
@@ -40,6 +44,7 @@ pre {
 
 .post {
     width: 600px;
+    height: 610px;
     margin-left: 175px;
     margin-top: 20px;
     margin-bottom: 40px;
@@ -50,7 +55,7 @@ pre {
 
 .instruments {
     font-size: 22px;
-    margin-top: -65px;
+    float: right;
     text-align: right;
     margin-bottom: 10px;
 }
@@ -61,12 +66,14 @@ pre {
 }
 
 .description {
+    position: relative;  
     padding: 10px;
     height: 68px;
     width: 75%;
     border: 1px solid grey;
-    margin-top: -90px;
+    float: left;
     font-size: 18px;
+    margin-top: 10px;
 }
 
 .hashtag{
@@ -84,11 +91,15 @@ button.prime {
     outline: none;
 }
 
+.like {
+    position: relative;  
+    float: right;
+    margin-top: 5px;
+}
+
 button.like {
     height: 90px;
     width: 108px;
-    margin-left: 490px;
-    margin-top: 10px;
     background-color: white;
     background-image: url(images/like.png);
     background-repeat: no-repeat;
@@ -97,8 +108,7 @@ button.like {
 button.pressed_like {
     height: 90px;
     width: 108px;
-    margin-left: 490px;
-    margin-top: 10px;
+    margin-top: 5px;
     background-color: white;
     background-image: url(images/pressed_like.png);
     background-repeat: no-repeat;
@@ -124,11 +134,15 @@ button.more {
 .footer_1 {
     padding: 20px;
     text-align: left;
+    float: left;
+    position: relative;  
 }
 
 .footer_2 {
-    padding: 20px;
-    margin-top: -145px;
+    margin-top: 10px;
+    margin-right: 20px;
+    float: right;
+    position: relative;  
     text-align: right;
 }
 

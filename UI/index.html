@@ -6,12 +6,143 @@
         <link href="styles.css" rel="stylesheet">
     </head>
     <body>
+        <script src="PhotoPost.js">
+        </script>
+        <script>
+            console.log("Проверка всех методов:");
+            console.log("Получение фотопостов:");
+            console.log(PhotoPortal.getPhotoPost('2'));
+            console.log(PhotoPortal.getPhotoPost('21'));
+            console.log(PhotoPortal.getPhotoPost(2));
+            console.log(PhotoPortal.getPhotoPost());
+            console.log("Проверка на валидность:"); 
+            console.log(PhotoPortal.validatePhotoPost({
+            id: '30',
+            description: 'fsssgsf',
+            createdAt: new Date('2018-02-23T23:00:00'),
+            author: 'Mur',
+            photoLink: 'dlf.jpg',
+            hashTags: ['hastag1', 'hastag2', 'hashtag3']
+            }));
+            console.log(PhotoPortal.validatePhotoPost({
+            id: '25',
+            description: 'fsssgsf',
+            createdAt: new Date('2018-02-23T23:00:00'),
+            author: 'Mur',
+            photoLink: 'dlf.jpg'
+            }));
+            console.log(PhotoPortal.validatePhotoPost({
+            id: '5',
+            descriprion: 'Пятый',
+            createdAt: new Date('2018-02-23T23:00:00'),
+            author: 'Иванов Иван',
+            photoLink: 'http://ont.by/webroot/delivery/files/news/2018/02/22/Dom.jpg',
+            hashTags: ['hastag1', 'hastag2', 'hashtag3']
+            }));  
+            console.log(PhotoPortal.validatePhotoPost({
+            id: '25',
+            description: 'fsssgsf',
+            createdAt: new Date('2018-02-23T23:00:00'),
+            author: 'Mur',
+            photoLink: 'dlf.jpg',
+            hashTags: []
+            }));
+            console.log(PhotoPortal.validatePhotoPost({
+            id: 25,
+            description: 'fsssgsf',
+            createdAt: new Date('2018-02-23T23:00:00'),
+            author: 'Mur',
+            photoLink: 'dlf.jpg'
+            }));     
+            console.log("Добавление валидного фотопоста:"); 
+            console.log(PhotoPortal.addPhotoPost({
+            id: '21',
+            description: 'yeeeep!!',
+            createdAt: new Date('2018-03-02T09:45:00'),
+            author: 'lera',
+            photoLink: 'photo.jpg',
+            hashTags: ['happy','hurray']
+            })); 
+            console.log(PhotoPortal.getPhotoPost('21'));
+            console.log("Добавление невалидных фотопостов:");
+            console.log(PhotoPortal.validatePhotoPost({
+            id: 25,
+            description: 'fsssgsf',
+            createdAt: new Date('2018-02-23T23:00:00'),
+            author: 'Mur',
+            photoLink: 'dlf.jpg'
+            }));
+            console.log(PhotoPortal.validatePhotoPost({
+            id: '25',
+            description: 'fsssgsf',
+            createdAt: new Date('2018-02-23T23:00:00'),
+            author: 'Mur',
+            photoLink: 'dlf.jpg',
+            hashTags: []
+            })); 
+            console.log(PhotoPortal.validatePhotoPost({
+            id: '25',
+            createdAt: new Date('2018-02-23T23:00:00'),
+            author: 'Mur',
+            photoLink: 'dlf.jpg',
+            })); 
+            console.log("Изменение фотопоста:");
+            console.log(PhotoPortal.editPhotoPost('1', { 
+            descriprion: 'my new descriprion',
+            photoLink: 'http://haradok.info/static/news/5/4565/preview.jpg'
+            }));
+            console.log(PhotoPortal.getPhotoPost('1'));
+            console.log(PhotoPortal.editPhotoPost('3', {
+            author: 'maska', 
+            descriprion: 'edit descriprion and hastags',
+            hashTags: ['wow', 'yeeess'] 
+            }));
+            console.log(PhotoPortal.getPhotoPost('3'));
+            console.log(PhotoPortal.editPhotoPost('1', { photoLink: '' }));
+            console.log(PhotoPortal.editPhotoPost('30', {
+            descriprion: 'edit descriprion and hastags',
+            hashTags: ['wow', 'yeeess'] 
+            }));
+            console.log("Удаление фотопоста:");
+            console.log(PhotoPortal.removePhotoPost('21'));
+            console.log(PhotoPortal.removePhotoPost('30'));
+            console.log(PhotoPortal.removePhotoPost(20));
+            console.log(PhotoPortal.removePhotoPost());
+            console.log("Получение фотопоста с сортировкой:");
+            console.log(PhotoPortal.getPhotoPosts(0, 10));
+            console.log(PhotoPortal.getPhotoPosts());
+            console.log(PhotoPortal.getPhotoPosts(10, 10));
+            console.log("Получение фотопостов с фильтрация по автору 'Lenka':");
+            console.log(PhotoPortal.getPhotoPosts(0, 10, {
+            author: 'Lenka'
+            }));
+            console.log("Получение фотопостов с фильтрация по датам:");
+            console.log(PhotoPortal.getPhotoPosts(0, 10, {
+            start: new Date('2018-03-23T23:00:00'
+            )}));
+            console.log(PhotoPortal.getPhotoPosts(0, 10, {
+            start: new Date('2018-03-23T23:00:00'),
+            end: new Date('2018-03-24T23:00:00')
+            }));
+            console.log("Получение фотопостов с фильтрация по хэштегам:");
+            console.log(PhotoPortal.getPhotoPosts(0, 10, {
+            hashTags: ['wow', 'yeeess'] 
+            }));
+            console.log("Получение фотопостов с фильтрация по автору и хэштегам одновременно:");
+            console.log(PhotoPortal.getPhotoPosts(0, 10, {
+            author: 'Иванов Иван',
+            hashTags: ['hastag1', 'hastag2']
+            }));
+        </script>
         <header>
             <h1 style="text-align: center;">PhotoPortal <img src="images/emblem.jpg" width="50" height="50" alt="emblem"> </h1>
-            <img src="images/authorized_user.jpg" width="60" height="60" alt="user">
-            <font class="username">  sealjuli  </font><br>
-            <button class="prime">Добавить фото</button><br>
-            <button class="prime">Выйти<img src="images/exit.png"></button><br>
+            <div class="user">
+                <img src="images/authorized_user.jpg" width="60" height="60" alt="user">
+                <font class="username">  sealjuli  </font><br>
+                <button class="prime">Добавить фото</button><br>
+                 <!--<input type="button" class="prime">Добавить фото<br>-->
+                <button class="prime">Выйти<img src="images/exit.png"></button><br>
+            </div>
             <div class="filter">
                 <font size="5">Фильтр фото постов</font><br>
                 <input type="text" size="24" placeholder="по имени автора"><br>
@@ -30,7 +161,9 @@
             </div>
             <div class="date">26.02.2018 14:48</div>
             <img src="images/photo.jpg" width="600" height="420" alt="photo">
-            <button class="like"></button><br>
+            <div class="like"> 
+                <button class="like"></button><br>
+            </div>
             <div class="description">  
                 <font><b>sealjuli:</b> краткое описание к фотографии</font> 
                 <br>
@@ -44,7 +177,9 @@
             <font class="username">  username  </font>
             <div class="date">26.02.2018 14:00</div>
             <img src="images/photo.jpg" width="600" height="420" alt="photo">
-            <button class="pressed_like"></button><br>
+            <div class="like"> 
+                <button class="pressed_like"></button><br>
+            </div>
             <div class="description">  
                 <font><b>username:</b> краткое описание к фотографии</font> 
                 <br>
@@ -58,7 +193,9 @@
             <font class="username">  username  </font>
             <div class="date">25.02.2018 21:33</div>
             <img src="images/photo.jpg" width="600" height="420" alt="photo">
-            <button class="like"></button><br>
+            <div class="like"> 
+                <button class="like"></button><br>
+            </div>
             <div class="description">  
                 <font><b>username:</b> краткое описание к фотографии</font> 
                 <br>
@@ -72,7 +209,9 @@
             <font class="username">  username  </font>
             <div class="date">25.02.2018 20:48</div>
             <img src="images/photo.jpg" width="600" height="420" alt="photo">
-            <button class="pressed_like"></button><br>
+            <div class="like"> 
+                <button class="pressed_like"></button><br>
+            </div>
             <div class="description">  
                 <font><b>username:</b> краткое описание к фотографии</font> 
                 <br>
@@ -90,7 +229,9 @@
             </div>
             <div class="date">24.02.2018 23:00</div>
             <img src="images/photo.jpg" width="600" height="420" alt="photo">
-            <button class="like"></button><br>
+            <div class="like"> 
+                <button class="like"></button><br>
+            </div>
             <div class="description">  
                 <font><b>sealjuli:</b> краткое описание к фотографии</font> 
                 <br>
@@ -104,7 +245,9 @@
             <font class="username">  username  </font>
             <div class="date">24.02.2018 08:17</div>
             <img src="images/photo.jpg" width="600" height="420" alt="photo">
-            <button class="pressed_like"></button><br>
+            <div class="like"> 
+                <button class="pressed_like"></button><br>
+            </div>
             <div class="description">  
                 <font><b>username:</b> краткое описание к фотографии</font> 
                 <br>
@@ -118,7 +261,9 @@
             <font class="username">  username  </font>
             <div class="date">23.02.2018 22:54</div>
             <img src="images/photo.jpg" width="600" height="420" alt="photo">
-            <button class="pressed_like"></button><br>
+            <div class="like"> 
+                <button class="pressed_like"></button><br>
+            </div>
             <div class="description">  
                 <font><b>username:</b> краткое описание к фотографии</font> 
                 <br>
@@ -132,7 +277,9 @@
             <font class="username">  username  </font>
             <div class="date">23.02.2018 21:44</div>
             <img src="images/photo.jpg" width="600" height="420" alt="photo">
-            <button class="like"></button><br>
+            <div class="like"> 
+                <button class="like"></button><br>
+            </div>
             <div class="description">  
                 <font><b>username:</b> краткое описание к фотографии</font> 
                 <br>
@@ -146,7 +293,9 @@
             <font class="username">  username  </font>
             <div class="date">23.02.2018 17:28</div>
             <img src="images/photo.jpg" width="600" height="420" alt="photo">
-            <button class="like"></button><br>
+            <div class="like"> 
+                <button class="like"></button><br>
+            </div>
             <div class="description">  
                 <font><b>username:</b> краткое описание к фотографии</font> 
                 <br>
@@ -164,7 +313,9 @@
             </div>
             <div class="date">23.02.2018 15:11</div>
             <img src="images/photo.jpg" width="600" height="420" alt="photo">
-            <button class="pressed_like"></button><br>
+            <div class="like"> 
+                <button class="pressed_like"></button><br>
+            </div>
             <div class="description">  
                 <font><b>sealjuli:</b> краткое описание к фотографии</font> 
                 <br>
@@ -178,13 +329,13 @@
     <footer>
     <div class="footer_1">
         <b><img src="images/emblem1.jpg" width="30" height="30" alt="emblem"> PhotoPortal</b> 
-        <pre>Последние изменения: 15.02.2018</pre>
+        <pre>Последние изменения: 15.02.2018</pre><br>
      </div>
      <div class="footer_2">
-            <pre> Автор: Шемплехова Юлия
+        <pre> Автор: Шемплехова Юлия
                   2 курс 2 группа 
                   ms.yulsh@mail.ru 
-            </pre>
+        </pre>
     </div>
     </footer>
     </body>
