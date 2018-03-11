@@ -160,7 +160,8 @@ let DOM = (function() {
             DOM.removePhotoPost('10');
             DOM.editPhotoPost('21', {
             id: '21',
-            description: '*опаньки*'
+            description: '*опаньки*',
+            hashTags: ['оп', 'оп']
             });
             DOM.editPhotoPost('21', {
             id: '21',
