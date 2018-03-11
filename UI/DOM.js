@@ -165,7 +165,8 @@ let DOM = (function() {
             });
             DOM.editPhotoPost('21', {
             id: '21',
-            description: ''
+            description: '',
+            hashTags: ['оп', 'оп']
             });
         }
     };
