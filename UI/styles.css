@@ -7,7 +7,7 @@ body {
 header { 
     margin: 0 auto;
     width: 1400px;
-    margin-bottom: 170px;
+    height: 70px;
 }
 
 h1 {
@@ -16,7 +16,7 @@ h1 {
 
 .user {
     float: left;
-    margin-left: 100px;
+    margin-left: 13%;
 }
 
 .filter {
@@ -26,7 +26,7 @@ h1 {
 }
 
 .filter input {
-    margin-top: 10px;
+    margin-top: 7px;
 } 
 
 pre {
@@ -37,18 +37,19 @@ pre {
 .content {
     width: 1100px;
     margin: 0 auto;
+    margin-top: 6%;
     padding: 10px 0px 10px 100px;
     background-color: #E6E6FA;
     border: 1px solid grey;
 }
 
 .post {
-    width: 600px;
-    height: 610px;
+    width: 55%;
     margin-left: 175px;
     margin-top: 20px;
     margin-bottom: 40px;
     padding: 20px;
+    padding-bottom: 120px;
     background-color: white;
     border: 1px solid grey;
 }
@@ -76,10 +77,18 @@ pre {
     margin-top: 10px;
 }
 
-.hashtag{
+.hashtag {
     height: 20px;
     margin-top: 20px;
     border: 1px solid grey;
+}
+
+.hello {
+    
+    font-size: 30px;
+    height: 35px;
+    width: 160px;
+    margin-left: 13%;
 }
 
 button.prime {
@@ -97,8 +106,28 @@ button.prime {
     margin-top: 5px;
 }
 
+.main_photo {
+    margin-left: 13%;
+    height: 60px;
+    width: 60px;
+    background-image: url(images/authorized_user.jpg);
+    background-repeat: no-repeat;
+}
+
+.photo {
+    height: 60px;
+    width: 60px;
+    background-repeat: no-repeat;
+}
+
+.photoLink {
+    width: 100%;
+  
+    background-repeat: no-repeat;
+}
+
 button.like {
-    height: 90px;
+    height: 95px;
     width: 108px;
     background-color: white;
     background-image: url(images/like.png);
@@ -129,6 +158,9 @@ button.more {
     vertical-align: top;
     border-radius: 10px;
     white-space: pre;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-left: 1%;
 }
 
 .footer_1 {
