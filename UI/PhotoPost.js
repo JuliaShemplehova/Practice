@@ -2,16 +2,16 @@ var PhotoPortal = (function() {
  var photoPosts = [
     {
     id: '1',
-    descriprion: 'Нулевой',
+    description: 'Нулевой',
     createdAt: new Date('2018-02-21T23:00:00'),
     author: 'Lenka',
-    photoLink: 'http://ont.by/webroot/delivery/files/news/2018/02/22/Dom.jpg',
+    photoLink: 'images/photo.jpg',
     hashTags: ['hastag1', 'hastag2', 'hashtag3'],
     likes: ['sealjuli', 'natasha', 'kirill99', 'jess']
    },
    {
     id: '2',
-    descriprion: 'Первый',
+    description: 'Первый',
     createdAt: new Date('2017-02-01T23:00:00'),
     author: 'Lenka',
     photoLink: 'http://ont.by/webroot/delivery/files/news/2018/02/22/Dom.jpg',
@@ -20,7 +20,7 @@ var PhotoPortal = (function() {
    },
    {
     id: '3',
-    descriprion: 'Второй',
+    description: 'Второй',
     createdAt: new Date('2018-02-23T23:00:00'),
     author: 'Иванов Иван',
     photoLink: 'http://ont.by/webroot/delivery/files/news/2018/02/22/Dom.jpg',
@@ -29,43 +29,42 @@ var PhotoPortal = (function() {
    },
    {
     id: '4',
-    descriprion: 'Третий',
+    description: 'Урааа, победа!!!',
     createdAt: new Date('2018-03-24T23:00:00'),
     author: 'Иванов Иван',
     photoLink: 'http://ont.by/webroot/delivery/files/news/2018/02/22/Dom.jpg',
     hashTags: ['hastag1', 'hastag2'],
-    likes: ['sealjuli', 'natasha', 'kirill99', 'jess']
+    likes: ['sealjuli', 'natasha', 'kirill99']
    },
    {
     id: '5',
-    descriprion: 'Четвертый',
+    description: 'Енотик',
     createdAt: new Date('2018-03-23T23:00:00'),
     author: 'Иванов Иван',
-    photoLink: 'http://ont.by/webroot/delivery/files/news/2018/02/22/Dom.jpg',
+    photoLink: 'http://www.bugaga.ru/uploads/posts/2016-08/1471555196_subbota-25.jpg',
     hashTags: ['hastag1', 'hastag2'],
-    likes: ['sealjuli', 'natasha', 'kirill99', 'jess']
    },
    {
     id: '6',
-    descriprion: 'Пятый',
+    description: 'Красота',
     createdAt: new Date('2018-02-23T23:00:00'),
     author: 'Иванов Иван',
-    photoLink: 'http://ont.by/webroot/delivery/files/news/2018/02/22/Dom.jpg',
+    photoLink: 'https://bestcube.space/wp-content/uploads/0Jrvgf38V8.jpg',
     hashTags: ['hastag1', 'hastag2', 'hashtag3'],
     likes: ['sealjuli', 'natasha', 'kirill99', 'jess']
    },
    {
     id: '7',
-    descriprion: 'Шестой',
+    description: 'Какая кисонька!!',
     createdAt: new Date('2018-03-25T23:00:00'),
     author: 'Mr. Snow',
-    photoLink: 'http://ont.by/webroot/delivery/files/news/2018/02/22/Dom.jpg',
-    hashTags: ['hastag1', 'hastag2', 'hashtag3'],
+    photoLink: 'https://i.ytimg.com/vi/GcEJweSktko/maxresdefault.jpg',
+    hashTags: ['cat', 'cats', 'mur'],
     likes: ['sealjuli', 'natasha', 'kirill99', 'jess']
    },
    {
     id: '8',
-    descriprion: 'Седьмой',
+    description: 'Седьмой',
     createdAt: new Date('2018-02-23T23:00:00'),
     author: 'Иванов Иван',
     photoLink: 'http://ont.by/webroot/delivery/files/news/2018/02/22/Dom.jpg',
@@ -74,7 +73,7 @@ var PhotoPortal = (function() {
    },
    {
     id: '9',
-    descriprion: 'Mr. Snow',
+    description: 'от так от',
     createdAt: new Date('2018-02-23T23:00:00'),
     author: 'Иванов Иван',
     photoLink: 'http://ont.by/webroot/delivery/files/news/2018/02/22/Dom.jpg',
@@ -83,7 +82,7 @@ var PhotoPortal = (function() {
    },
    {
     id: '10',
-    descriprion: 'Девятый',
+    description: 'Девятый',
     createdAt: new Date('2018-02-23T23:00:00'),
     author: 'Иванов Иван',
     photoLink: 'http://ont.by/webroot/delivery/files/news/2018/02/22/Dom.jpg',
@@ -92,16 +91,16 @@ var PhotoPortal = (function() {
    },
    {
     id: '11',
-    descriprion: 'Десятый',
+    description: 'ору',
     createdAt: new Date('2018-02-23T23:00:00'),
-    author: 'Иванов Иван',
-    photoLink: 'http://ont.by/webroot/delivery/files/news/2018/02/22/Dom.jpg',
+    author: 'sealjuli',
+    photoLink: 'http://hronika.info/uploads/posts/2015-06/1434033585_prikol7.jpg',
     hashTags: ['hastag1', 'hastag2', 'hashtag3'],
     likes: ['sealjuli', 'natasha', 'kirill99', 'jess']
    },
    {
     id: '12',
-    descriprion: 'Одиннадцатый',
+    description: 'Одиннадцатый',
     createdAt: new Date('2018-02-23T23:00:00'),
     author: 'Иванов Иван',
     photoLink: 'http://ont.by/webroot/delivery/files/news/2018/02/22/Dom.jpg',
@@ -110,7 +109,7 @@ var PhotoPortal = (function() {
    },
    {
     id: '13',
-    descriprion: 'Двенадцатый',
+    description: 'Двенадцатый',
     createdAt: new Date('2018-02-23T23:00:00'),
     author: 'Иванов Иван',
     photoLink: 'http://ont.by/webroot/delivery/files/news/2018/02/22/Dom.jpg',
@@ -119,7 +118,7 @@ var PhotoPortal = (function() {
    },
    {
     id: '14',
-    descriprion: 'Тринидцатый',
+    description: 'Тринидцатый',
     createdAt: new Date('2018-02-23T23:00:00'),
     author: 'Mr. Snow',
     photoLink: 'http://ont.by/webroot/delivery/files/news/2018/02/22/Dom.jpg',
@@ -128,7 +127,7 @@ var PhotoPortal = (function() {
    },
    {
     id: '15',
-    descriprion: '144',
+    description: '144',
     createdAt: new Date('2018-02-23T23:00:00'),
     author: 'Mr. Snow',
     photoLink: 'http://ont.by/webroot/delivery/files/news/2018/02/22/Dom.jpg',
@@ -137,16 +136,16 @@ var PhotoPortal = (function() {
    },
    {
     id: '16',
-    descriprion: '155',
-    createdAt: new Date('2018-02-26T23:00:00'),
-    author: 'Lenka',
-    photoLink: 'http://ont.by/webroot/delivery/files/news/2018/02/22/Dom.jpg',
+    description: 'ох если бы, мне нужно делать Уп',
+    createdAt: new Date('2018-04-11T23:00:00'),
+    author: 'sealjuli',
+    photoLink: 'http://trinixy.ru/pics5/20180119/kartinki_01.jpg',
     hashTags: ['hastag1', 'hastag2', 'hashtag3'],
     likes: ['sealjuli', 'natasha', 'kirill99', 'jess']
    },
    {
     id: '17',
-    descriprion: '166',
+    description: '166',
     createdAt: new Date('2018-02-23T23:00:00'),
     author: 'Иванов Иван',
     photoLink: 'http://ont.by/webroot/delivery/files/news/2018/02/22/Dom.jpg',
@@ -155,7 +154,7 @@ var PhotoPortal = (function() {
    },
    {
     id: '18',
-    descriprion: '177',
+    description: '177',
     createdAt: new Date('2018-02-23T23:00:00'),
     author: 'Lenka',
     photoLink: 'http://ont.by/webroot/delivery/files/news/2018/02/22/Dom.jpg',
@@ -164,7 +163,7 @@ var PhotoPortal = (function() {
    },
    {
     id: '19',
-    descriprion: '188',
+    description: '188',
     createdAt: new Date('2018-02-23T23:00:00'),
     author: 'Иванов Иван',
     photoLink: 'http://ont.by/webroot/delivery/files/news/2018/02/22/Dom.jpg',
@@ -173,7 +172,7 @@ var PhotoPortal = (function() {
    },
    {
     id: '20',
-    descriprion: '199',
+    description: '199',
     createdAt: new Date('2018-02-23T23:00:00'),
     author: 'Иванов Иван',
     photoLink: 'http://ont.by/webroot/delivery/files/news/2018/02/22/Dom.jpg',
@@ -298,6 +297,9 @@ return {
   addPhotoPost: function(photoPost) {
     if(PhotoPortal.validatePhotoPost(photoPost) === true) {
       photoPosts.push(photoPost);
+      photoPosts.sort(function(a, b) {
+        return b.createdAt - a.createdAt;
+      });
       return true;
     }
     else 
@@ -311,9 +313,9 @@ return {
       });
       if (foundIndex !== -1) {
         var post = photoPosts[foundIndex];
-        if (photoPost.descriprion !== undefined) {
-          if ((photoPost.descriprion !== "") && (typeof photoPost.descriprion === "string") && (photoPost.descriprion.length < 200)) {
-            photoPosts[foundIndex].descriprion = photoPost.descriprion;
+        if (photoPost.description !== undefined) {
+          if ((photoPost.description !== "") && (typeof photoPost.description === "string") && (photoPost.description.length < 200)) {
+            photoPosts[foundIndex].description = photoPost.description;
           }
           else return false;
         }
@@ -345,7 +347,7 @@ return {
   },
 
   removePhotoPost: function(id) {
-    if (id !== undefined) {
+    if (id !== undefined && id !=='' && typeof id === "string") {
     var foundIndex = photoPosts.findIndex(function(element) {
         return element.id === id;
     });
