@@ -156,7 +156,6 @@ let DOM = (function() {
                 content.removeChild(del);
                 content.appendChild(butt);
                 content.insertBefore(DOM.doPhotopost(PhotoPortal.getPhotoPosts(0, PhotoPortal.getLength())[foundIndex]), content.lastElementChild);
-                
             }
             else {
               content.appendChild(butt);
