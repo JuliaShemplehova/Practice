@@ -180,7 +180,6 @@ let PhotoPortal = (function() {
     likes: ['sealjuli', 'natasha', 'kirill99', 'jess']
    }
   ];
-  let deletePhotoPosts = [];
 return { 
   getPhotoPosts: function (skip, top, filterConfig) {
     let copy = photoPosts;
@@ -353,7 +352,6 @@ return {
         return element.id === id;
     });
     if (foundIndex !== -1) {
-      deletePhotoPosts.push(photoPosts[foundIndex]);
       photoPosts.splice(foundIndex, 1);
       return true;
     }
@@ -363,10 +361,6 @@ return {
     else {
       return false;
     }
-  },
-
-  showDeletePhotoPosts: function() {
-    return deletePhotoPosts.slice(0, deletePhotoPosts.length);
   },
 
   getLength: function () {
