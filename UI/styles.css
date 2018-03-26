@@ -7,7 +7,7 @@ body {
 header { 
     margin: 0 auto;
     width: 1400px;
-    height: 70px;
+    height: 100px;
 }
 
 h1 {
@@ -16,11 +16,13 @@ h1 {
 
 .user {
     float: left;
-    margin-left: 13%;
+    margin-left: 10%;
+    width: 350px;
 }
 
 .filter {
     width: 300px;  
+    padding-top: 25px;
     float: right; 
     position: relative;  
 }
@@ -28,6 +30,42 @@ h1 {
 .filter input {
     margin-top: 7px;
 } 
+
+.log {
+    width: 300px;
+    height: 21px;
+    text-align: center;
+    font-size: 20px;
+}
+
+.name {
+    width: 96%;
+    background-color: black;
+    color: white;
+    text-align: center;
+    font-size: 25px;
+    padding: 10px;
+    margin-bottom: 50px;
+}
+
+.aut_form {
+    width: 550px;
+    margin-left: 140px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    padding: 20px;
+    background-color: white;
+    border: 1px solid black;
+    text-align: center;
+}
+
+.aut_font {
+    background-color: #6495ED;
+    font-size: 25px;
+    vertical-align: top;
+    padding-left: 50px;
+    padding-right: 50px;
+}
 
 pre {
     font-family: Arial;
@@ -37,10 +75,50 @@ pre {
 .content {
     width: 1100px;
     margin: 0 auto;
-    margin-top: 6%;
+    margin-top: 10%;
     padding: 10px 0px 10px 100px;
     background-color: #E6E6FA;
     border: 1px solid grey;
+}
+
+.content_aut {
+    margin: 0 auto;
+    border: 1px solid grey;
+    display: none; 
+    position: fixed; 
+    z-index: 1; 
+    padding-top: 200px; 
+    padding-left: 23%;
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,0.8); 
+}
+
+.content_add {
+    margin: 0 auto;
+    border: 1px solid grey;
+    display: none; 
+    position: fixed; 
+    z-index: 1; 
+    padding-left: 23%;
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,1); 
+}
+
+.edit_form {
+    width: 800px;
+    margin-top: 10px;
+    margin-bottom: 40px;
+    padding: 20px;
+    background-color: white;
+    border: 1px solid black;
 }
 
 .post {
@@ -77,6 +155,37 @@ pre {
     margin-top: 10px;
 }
 
+.inputs { 
+    padding: 10px;
+    height: 20px;
+    width: 95%;
+    border: 1px solid grey;
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+.obl {
+    width: 97%;
+    margin-top: 10px;
+    padding-top: 50px;
+    padding-bottom: 120px;
+    background-color: white;
+    border: 1px solid grey;
+    text-align: center;
+    font-size: 25px;
+}
+
+.obl_edit {
+    width: 97%;
+    margin-top: 10px;
+    padding-top: 10px;
+    padding-bottom: 20px;
+    background-color: white;
+    border: 1px solid grey;
+    text-align: center;
+    font-size: 25px;
+}
+
 .hashtag {
     height: 20px;
     margin-top: 20px;
@@ -84,7 +193,6 @@ pre {
 }
 
 .hello {
-    
     font-size: 30px;
     height: 35px;
     width: 160px;
@@ -95,9 +203,28 @@ button.prime {
     background: #6495ED;
     border-radius: 20px;
     font-size: 18px;
+    margin-left:  40px;
     height: 35px;
     width: 160px;
     outline: none;
+}
+
+button.prime_right {
+    background: #6495ED;
+    border-radius: 20px;
+    font-size: 18px;
+    margin-left:  40px;
+    height: 35px;
+    width: 160px;
+    outline: none;
+    position: relative;  
+    float: right;
+    margin-right: 70px;
+}
+
+.OK {
+    width: 50px;
+    margin-top: 10px;
 }
 
 .like {
@@ -120,9 +247,13 @@ button.prime {
     background-repeat: no-repeat;
 }
 
+.photo_edit {
+    width: 35%;
+    background-repeat: no-repeat;
+}
+
 .photoLink {
-    width: 100%;
-  
+    width: 100%;  
     background-repeat: no-repeat;
 }
 
@@ -137,7 +268,8 @@ button.like {
 button.pressed_like {
     height: 90px;
     width: 108px;
-    margin-top: 5px;
+    margin-top: 10px;
+    margin-left: 500px;
     background-color: white;
     background-image: url(images/pressed_like.png);
     background-repeat: no-repeat;
