@@ -3,17 +3,53 @@ const fs = require('fs');
 const path = require('path'); 
 
 let server = http.createServer((req, res) => { 
-	console.log(req.url)
-    let filePath = '';
-    if (req.url === '/?') {
-        filePath = './index.html';
-    } 
-    else {
-        filePath = '.' + req.url;
+    let filePath = '.' + req.url; 
+    if (filePath == './') 
+        filePath = './index.html'; 
+   let extname = path.extname(filePath); 
+   let contentType = 'text/html'; 
+   switch (extname) { 
+   	    case '.json': 
+   	        contentType = 'application/json'; 
+   	        break; 
+   	    case '.js': 
+   	        contentType = 'text/javascript';
+   	        break; 
+   	    case '.css': 
+   	        contentType = 'text/css'; 
+   	        break;
+   	    case '.png': 
+   	        contentType = 'image/png'; 
+   	        break; 
+   	    case '.jpg': 
+   	        contentType = 'image/jpg'; 
+   	        break; 
+   	    case '.jpeg': 
+   	        contentType = 'image/jpeg'; 
+   	        break; 
     }
 
-    res.write(fs.readFileSync(filePath, 'utf8'));
-    res.end();
+    fs.readFile(filePath, function(error, content) { 
+	    if (error) { 
+		    if (error.code == 'ENOENT') { 
+		        fs.readFile('./404.html', function(error, content) { 
+		    	    res.writeHead(200, { 
+		            'Content-Type': contentType}); 
+		            res.end(content, 'utf-8'); 
+		        }); 
+		    } 
+		    else { 
+			    res.writeHead(500); 
+			    res.end('ERROR: ' + error.code + ' ..\n'); 
+			    res.end(); 
+		    } 
+	    } 
+	    else { 
+		    res.writeHead(200, {'Content-Type': contentType}); 
+		    res.end(content, 'utf-8'); 
+	    } 
+    }); 
+
 }); 
 
 server.listen(3000, () => { 
