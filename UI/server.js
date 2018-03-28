@@ -31,7 +31,7 @@ let server = http.createServer((req, res) => {
 
     fs.readFile(filePath, function(error, content) { 
 	    if (error) { 
-	    	res.writeHead(500); 
+			res.writeHead(500); 
 			res.end('ERROR: ' + error.code + ' ..\n'); 
 			res.end(); 
 	    } 
