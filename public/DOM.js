@@ -1,4 +1,4 @@
-let DOM = (function() { 
+let DOM = (function() {
     let user;
     if (!user) {
         user = null;
