@@ -1,8 +1,6 @@
-let DOM = (function() { 
+let DOM = (function() {
     let user;
-    if (!user) {
-        user = null;
-    }
+    user = JSON.parse(window.localStorage.getItem("user"));
     let content = document.createElement('div');
     content.className = 'content';
     let more = document.createElement('button');
@@ -67,7 +65,7 @@ let DOM = (function() {
         };
        
         let okay = document.createElement('button');
-        okay.className = 'prime';
+        okay.className = 'prime_right';
         okay.innerHTML = 'ОК';
         post.appendChild(okay);
         okay.onclick = function() { 
@@ -76,6 +74,7 @@ let DOM = (function() {
             if (password.value && user_login.value) {
                 if (Сlients.validateUser(user_login.value, password.value)) {
                 user = user_login.value;
+                window.localStorage.setItem("user", JSON.stringify(user));
                 form.style.display = "none";
                 form.parentNode.removeChild(form);  
                 }
@@ -261,6 +260,7 @@ let DOM = (function() {
     exit.innerHTML = 'Выйти';
     exit.onclick = function() {
         user = null;
+        window.localStorage.setItem("user", JSON.stringify(user));
         content.innerHTML = "";
         aut.innerHTML = "";
         document.getElementById('input_author').value = "";
@@ -455,16 +455,46 @@ let DOM = (function() {
                 deletepic.src = 'images/delete.png';
                 dodelete.appendChild(deletepic);
                 dodelete.onclick = function() {
-                    let str = "";
-                    for (let i = 3; i < dodelete.id.length; i++) {
-                        str += dodelete.id.charAt(i);
+                    let form_delete = document.createElement('div');
+                    form_delete.className = 'content_aut';
+                    document.body.appendChild(form_delete);
+                    form_delete.style.display = "block";
+
+                    let cont = document.createElement('div');
+                    cont.className = 'aut_form';
+                    form_delete.appendChild(cont);
+                    let name = document.createElement('div');
+                    name.className = 'name';
+                    name.innerHTML = 'Вы действительно хотите удалить данный фотопост?';
+                    cont.appendChild(name);
+
+                    let cancel = document.createElement('button');
+                    cancel.className = 'prime';
+                    cancel.innerHTML = 'Нет';
+                    cont.appendChild(cancel);
+                    cancel.onclick = function() { 
+                        form_delete.parentNode.removeChild(form_delete);
+                        form_delete.style.display = "none";
+                    };
+       
+                    let okay = document.createElement('button');
+                    okay.className = 'prime_right';
+                    okay.innerHTML = 'Да';
+                    cont.appendChild(okay);
+                    okay.onclick = function() { 
+                        let str = "";
+                        for (let i = 3; i < dodelete.id.length; i++) {
+                            str += dodelete.id.charAt(i);
+                        }
+                        DOM.removePhotoPost(str);
+                        form_delete.parentNode.removeChild(form_delete);
+                        form_delete.style.display = "none";
                     }
-                    DOM.removePhotoPost(str);
-                    alert("Вы удалили фотопост");
                 }
                 instr.appendChild(dodelete);
                 post.appendChild(instr);
             }
+
             const fordate = {
                 year: 'numeric',
                 month: 'long',
@@ -481,12 +511,28 @@ let DOM = (function() {
             photo.alt = 'photo';
             photo.className = 'photoLink';
             post.appendChild(photo);
-            let like = document.createElement('div');
             let button_like = document.createElement('button');
             button_like.className = 'like';
             button_like.id = 'like' + post.id;
+            let bool = false;
             if (photoPost.likes) {
-                button_like.innerHTML = photoPost.likes.length + '<br>likes';
+                if (user) {
+                    for (let i = 0; i < photoPost.likes.length; i++) {
+                            if (photoPost.likes[i] === user) {
+                                bool = true;
+                            }
+                    }
+                    if (bool) {
+                        button_like.className = 'pressed_like';
+                        button_like.innerHTML = photoPost.likes.length + '<br>likes';
+                    }
+                    else {
+                        button_like.className = 'like';
+                        button_like.innerHTML = photoPost.likes.length + '<br>likes';
+                    }
+                }
+                else
+                    button_like.innerHTML = photoPost.likes.length + '<br>likes';
             }
             else {
                 button_like.innerHTML = '0<br>likes';
@@ -499,11 +545,16 @@ let DOM = (function() {
                         str += button_like.id.charAt(i);
                     }
                     let this_post = PhotoPortal.getPhotoPost(str);
-                    PhotoPortal.putlike(this_post, user);
-                    button_like.innerHTML = photoPost.likes.length + '<br>likes';
+                    if (PhotoPortal.putlike(this_post, user)) {
+                        button_like.className = 'pressed_like';
+                        button_like.innerHTML = photoPost.likes.length + '<br>likes';
+                    }
+                    else {
+                        button_like.className = 'like';
+                        button_like.innerHTML = photoPost.likes.length + '<br>likes';
+                    }
                 }
             };
-            post.appendChild(like);
             let desc = document.createElement('div');
             desc.className = 'description';
             desc.innerHTML = '<b>' + photoPost.author + '</b>' + ': ' + photoPost.description + '<br>';
