@@ -1,6 +1,9 @@
 const fs = require('fs');
 let PhotoPortal = (function() {
-let photoPosts = JSON.parse(fs.readFileSync('./server/data/posts.json', 'utf8'));
+let photoPosts = JSON.parse(fs.readFileSync('./server/data/posts.json', 'utf8'), function (key, value) {
+  if (key == 'createdAt') return new Date(value);
+    return value;
+});
 return { 
   getPhotoPosts: function (skip, top, filterConfig) {
     let copy = photoPosts;
@@ -84,7 +87,7 @@ return {
         });
       if (foundIndex === -1) {
         if ((photoPost.description) && (photoPost.description !== "") && (typeof photoPost.description === "string") && (photoPost.description.length < 200)) {
-          if ((photoPost.createdAt) && (photoPost.creatAt !== "") && (photoPost.createdAt instanceof Date)) {
+          if ((photoPost.createdAt) && (photoPost.creatAt !== "") /*&& (photoPost.createdAt instanceof Date)*/) {
             if ((photoPost.author) && (photoPost.author !== "") && (typeof photoPost.author === "string")) {
               if ((photoPost.photoLink) && (photoPost.photoLink !== "") && (typeof photoPost.photoLink === "string")) {
                 if (photoPost.likes.length === 0) {
@@ -187,8 +190,8 @@ return {
   },
 
   putlike: function (photoPost, user) {
-    if (photoPost.likes.length === 0) {
-      photoPost.likes.push(user);         
+    if (photoPost.likes.length == 0) {
+      photoPost.likes.push(user); 
     }
     else {
       let bool = false;
@@ -204,6 +207,8 @@ return {
         photoPost.likes.push(user);
       }
     }
+    fs.writeFileSync('./server/data/posts.json',JSON.stringify(photoPosts)); 
+    return photoPost.likes.length;
   }
 
 }
