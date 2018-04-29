@@ -385,8 +385,9 @@ return {
 
   putlike: function (photoPost, user) {
     if (photoPost.likes.length === 0) {
-      photoPost.likes.push(user);
-      alert("Вы поставили лайк");             
+      photoPost.likes.push(user); 
+      window.localStorage.setItem("arrayPhotoPosts", JSON.stringify(photoPosts));
+      return true;          
     }
     else {
       let bool = false;
@@ -397,14 +398,15 @@ return {
       }
       if (bool) {
         photoPost.likes.splice(photoPost.likes.indexOf(user), 1);
-        alert("Вы убрали лайк");
+        window.localStorage.setItem("arrayPhotoPosts", JSON.stringify(photoPosts));
+        return false; 
       }
       else {
         photoPost.likes.push(user);
-        alert("Вы поставили лайк");
+        window.localStorage.setItem("arrayPhotoPosts", JSON.stringify(photoPosts));
+        return true; 
       }
     }
-    window.localStorage.setItem("arrayPhotoPosts", JSON.stringify(photoPosts));
   }
 
 }

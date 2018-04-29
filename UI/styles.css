@@ -233,6 +233,12 @@ button.prime_right {
     margin-top: 5px;
 }
 
+.pressed_like {
+    position: relative;  
+    float: right;
+    margin-top: 5px;
+}
+
 .main_photo {
     margin-left: 13%;
     height: 60px;
@@ -266,10 +272,8 @@ button.like {
 }
 
 button.pressed_like {
-    height: 90px;
+    height: 95px;
     width: 108px;
-    margin-top: 10px;
-    margin-left: 500px;
     background-color: white;
     background-image: url(images/pressed_like.png);
     background-repeat: no-repeat;
