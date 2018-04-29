@@ -1,8 +1,6 @@
+"use strict";
 let DOM = (function() {
-    let user;
-    if (!user) {
-        user = null;
-    }
+    let user = JSON.parse(window.localStorage.getItem("user"));
     let content = document.createElement('div');
     content.className = 'content';
     let more = document.createElement('button');
@@ -17,6 +15,14 @@ let DOM = (function() {
     aut.className = 'user';
     document.body.appendChild(container);
     document.body.appendChild(content);
+    const fordate = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+    };
+    let start = 0, end = 10;
 
     //Авторизация
     logIn.onclick = function() {
@@ -24,42 +30,42 @@ let DOM = (function() {
         form.className = 'content_aut';
         document.body.appendChild(form);
         form.style.display = "block";
-        let post = document.createElement('div');
-        post.className = 'aut_form';
-        form.appendChild(post);
+        let aut_form = document.createElement('div');
+        aut_form.className = 'aut_form';
+        form.appendChild(aut_form);
         let name = document.createElement('div');
         name.className = 'name';
         name.innerHTML = 'Авторизация на сайте';
-        post.appendChild(name);
+        aut_form.appendChild(name);
 
         let font1 = document.createElement('font');
         font1.className = 'aut_font';
         font1.innerHTML = "  Логин ";
-        post.appendChild(font1);
+        aut_form.appendChild(font1);
         let input1 = document.createElement('input');
         input1.className = 'log';
         input1.id = 'input_login';
-        post.appendChild(input1);
+        aut_form.appendChild(input1);
         let p = document.createElement('font');
         p.innerHTML = '<br><br>';
-        post.appendChild(p);
+        aut_form.appendChild(p);
 
         let font2 = document.createElement('font');
         font2.className = 'aut_font';
         font2.innerHTML = "Пароль";
-        post.appendChild(font2);
+        aut_form.appendChild(font2);
         let input2 = document.createElement('input');
         input2.className = 'log';
         input2.id = 'input_password';
-        post.appendChild(input2);
+        aut_form.appendChild(input2);
         let p1 = document.createElement('font');
         p1.innerHTML = '<br><br>';
-        post.appendChild(p1);
+        aut_form.appendChild(p1);
 
         let cancel = document.createElement('button');
         cancel.className = 'prime';
         cancel.innerHTML = 'Отмена';
-        post.appendChild(cancel);
+        aut_form.appendChild(cancel);
         cancel.onclick = function() { 
             form.parentNode.removeChild(form);
             user = null;
@@ -67,15 +73,16 @@ let DOM = (function() {
         };
        
         let okay = document.createElement('button');
-        okay.className = 'prime';
+        okay.className = 'prime_right';
         okay.innerHTML = 'ОК';
-        post.appendChild(okay);
+        aut_form.appendChild(okay);
         okay.onclick = function() { 
             let user_login = document.getElementById('input_login');    
             let password = document.getElementById('input_password'); 
             if (password.value && user_login.value) {
                 if (Сlients.validateUser(user_login.value, password.value)) {
                 user = user_login.value;
+                window.localStorage.setItem("user", JSON.stringify(user));
                 form.style.display = "none";
                 form.parentNode.removeChild(form);  
                 }
@@ -191,8 +198,23 @@ let DOM = (function() {
         let inp = document.createElement('input');
         inp.type = 'file';
 
+        let textFile;
+        let load;
+     /*   inp.onchange = function() {
+            let fileList = this.files;
+            textFile = fileList[0];
+            let makeRequest = async() => {
+                
+                let load = "" + await Controller.loadFile(textFile);
+                console.log(load);
+                alert(load);
+            };
+            makeRequest();
+        };*/
+        
         inp.id = 'photopost_link';
         obl.appendChild(inp);
+
 
         let desc = document.createElement('input');
         desc.className = 'inputs';
@@ -224,9 +246,10 @@ let DOM = (function() {
         okay.className = 'prime_right';
         okay.innerHTML = 'ОК';
         post.appendChild(okay);
+
         //добавление фотопоста
         okay.onclick = function() { 
-            last_id = content.firstElementChild.id;
+            let last_id = content.firstElementChild.id;
             last_id++;
             mass = document.getElementById('photopost_hash').value.split(', ');
             let str = document.getElementById('photopost_link').value.split('fakepath')[1];
@@ -234,6 +257,7 @@ let DOM = (function() {
             let link = "images/";
             for (let i = 1; i < str.length; i++)
                 link += str[i];
+          //  let link = load;
             if (link !== "" && document.getElementById('photopost_desc').value !== "") {
                 PhotoPortal.addPhotoPost({
                     id: last_id + "",
@@ -244,6 +268,23 @@ let DOM = (function() {
                     hashTags: mass,
                     likes: []
                 }); 
+
+               /* let makeRequest = async() => {
+                    PhotoPortal.addPhotoPost(await Controller.addPhotoPost({
+                        id: last_id,
+                        description: document.getElementById('photopost_desc').value,
+                        createdAt: JSON.parse(JSON.stringify(new Date())), //date.innerHTML = photoPost.createdAt.toLocaleString("en-US", fordate);
+                        author: user,
+                        photoLink: link,
+                        hashTags: mass,
+                        likes: []
+                    }));
+                };
+
+                makeRequest().catch(reject => {
+                    alert("Проверьте введенные данные");
+                });
+               */
                 form_add.parentNode.removeChild(form_add);
                 form_add.style.display = "none";
                 content.innerHTML = "";
@@ -261,6 +302,7 @@ let DOM = (function() {
     exit.innerHTML = 'Выйти';
     exit.onclick = function() {
         user = null;
+        window.localStorage.setItem("user", JSON.stringify(user));
         content.innerHTML = "";
         aut.innerHTML = "";
         document.getElementById('input_author').value = "";
@@ -287,7 +329,7 @@ let DOM = (function() {
                 aut.appendChild(exit);
                 container.appendChild(aut);   
             }
-             else {
+            else {
                 hello.className = 'hello';
                 hello.innerHTML = 'Добро пожаловать!';
                 aut.appendChild(hello);
@@ -297,6 +339,17 @@ let DOM = (function() {
                 aut.appendChild(logIn);
                 container.appendChild(aut);
             }
+            DOM.showTape(PhotoPortal.getPhotoPosts(0, 10), 0, 10);
+
+         /*   const makeRequest = async (start, end) => {
+                await Controller.getPhotoPosts(start1, end);
+                alert("gr");
+            };
+
+            makeRequest(start, end).catch(reject => {
+                alert("[p");
+            });*/
+           
         },
         doPhotopost: function(photoPost) {
             let post = document.createElement('div');
@@ -446,7 +499,7 @@ let DOM = (function() {
                 p.innerHTML = '<br>';
                 instr.appendChild(p);
 
-
+                //удаление
                 let dodelete = document.createElement('font');
                 dodelete.innerHTML = 'Удалить';
                 dodelete.id = 'del' + post.id;
@@ -455,23 +508,56 @@ let DOM = (function() {
                 deletepic.src = 'images/delete.png';
                 dodelete.appendChild(deletepic);
                 dodelete.onclick = function() {
-                    let str = "";
-                    for (let i = 3; i < dodelete.id.length; i++) {
-                        str += dodelete.id.charAt(i);
+                    let form_delete = document.createElement('div');
+                    form_delete.className = 'content_aut';
+                    document.body.appendChild(form_delete);
+                    form_delete.style.display = "block";
+
+                    let cont = document.createElement('div');
+                    cont.className = 'aut_form';
+                    form_delete.appendChild(cont);
+                    let name = document.createElement('div');
+                    name.className = 'name';
+                    name.innerHTML = 'Вы действительно хотите удалить данный фотопост?';
+                    cont.appendChild(name);
+
+                    let cancel = document.createElement('button');
+                    cancel.className = 'prime';
+                    cancel.innerHTML = 'Нет';
+                    cont.appendChild(cancel);
+                    cancel.onclick = function() { 
+                        form_delete.parentNode.removeChild(form_delete);
+                        form_delete.style.display = "none";
+                    };
+       
+                    let okay = document.createElement('button');
+                    okay.className = 'prime_right';
+                    okay.innerHTML = 'Да';
+                    cont.appendChild(okay);
+                    okay.onclick = function() { 
+                        let str = "";
+                        for (let i = 3; i < dodelete.id.length; i++) {
+                            str += dodelete.id.charAt(i);
+                        }
+                     /*   const makeRequest = async() => {
+                            await Controller.removePhotoPost(str);
+                            window.localStorage.setItem("arrayPhotoPosts", JSON.stringify(photoPosts));
+                        };
+                        makeRequest().catch(reject => {
+                            alert("[p");
+                        });*/
+                        DOM.removePhotoPost(str);
+                        form_delete.parentNode.removeChild(form_delete);
+                        form_delete.style.display = "none";
+
                     }
-                    DOM.removePhotoPost(str);
-                    alert("Вы удалили фотопост");
+                    
                 }
                 instr.appendChild(dodelete);
                 post.appendChild(instr);
             }
-            const fordate = {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric',
-            };
+
+            
             let date = document.createElement('div');
             date.className = 'date';
             date.innerHTML = photoPost.createdAt.toLocaleString("en-US", fordate);
@@ -481,12 +567,28 @@ let DOM = (function() {
             photo.alt = 'photo';
             photo.className = 'photoLink';
             post.appendChild(photo);
-            let like = document.createElement('div');
             let button_like = document.createElement('button');
             button_like.className = 'like';
             button_like.id = 'like' + post.id;
+            let bool = false;
             if (photoPost.likes) {
-                button_like.innerHTML = photoPost.likes.length + '<br>likes';
+                if (user) {
+                    for (let i = 0; i < photoPost.likes.length; i++) {
+                            if (photoPost.likes[i] === user) {
+                                bool = true;
+                            }
+                    }
+                    if (bool) {
+                        button_like.className = 'pressed_like';
+                        button_like.innerHTML = photoPost.likes.length + '<br>likes';
+                    }
+                    else {
+                        button_like.className = 'like';
+                        button_like.innerHTML = photoPost.likes.length + '<br>likes';
+                    }
+                }
+                else
+                    button_like.innerHTML = photoPost.likes.length + '<br>likes';
             }
             else {
                 button_like.innerHTML = '0<br>likes';
@@ -499,11 +601,16 @@ let DOM = (function() {
                         str += button_like.id.charAt(i);
                     }
                     let this_post = PhotoPortal.getPhotoPost(str);
-                    PhotoPortal.putlike(this_post, user);
-                    button_like.innerHTML = photoPost.likes.length + '<br>likes';
+                    if (PhotoPortal.putlike(this_post, user)) {
+                        button_like.className = 'pressed_like';
+                        button_like.innerHTML = photoPost.likes.length + '<br>likes';
+                    }
+                    else {
+                        button_like.className = 'like';
+                        button_like.innerHTML = photoPost.likes.length + '<br>likes';
+                    }
                 }
             };
-            post.appendChild(like);
             let desc = document.createElement('div');
             desc.className = 'description';
             desc.innerHTML = '<b>' + photoPost.author + '</b>' + ': ' + photoPost.description + '<br>';
@@ -542,7 +649,7 @@ let DOM = (function() {
         },
         addPhotoPost: function(photoPost) {
           if (PhotoPortal.addPhotoPost(photoPost) === true) {
-                   window.localStorage.setItem("arrayPhotoPosts", JSON.stringify(Photortal.photoPosts));
+                   window.localStorage.setItem("arrayPhotoPosts", JSON.stringify(PhotoPortal.photoPosts));
 
             content.insertBefore(DOM.doPhotopost(photoPost), content.firstElementChild);
             content.removeChild(content.lastElementChild);
@@ -572,7 +679,7 @@ let DOM = (function() {
         },
         show: function() {
             DOM.autorizing(user);
-            DOM.showTape(PhotoPortal.getPhotoPosts(0, 10), 0, 10);
+         //   DOM.showTape(PhotoPortal.getPhotoPosts(0, 10), 0, 10);
         }
     };
 }());
