@@ -8,7 +8,7 @@ let Controller = (function() {
                 	res = JSON.stringify({
                 		skip: String(start),
                         top: String(end),
-                        filter: String(filter)
+                        filterConfig: JSON.stringify(filter)
                 	});
                 }
                 else {
@@ -17,15 +17,16 @@ let Controller = (function() {
                         top: String(end)
                     });
                 }
-                //xml.setRequestHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
                 xml.open("POST", "http://localhost:3000/getPosts", true);
                 xml.setRequestHeader('Content-Type', 'application/json');
 
                 xml.onload = function() {
                     if (xml.status == 200) {
                         posts = JSON.parse(xml.responseText);
-                        DOM.showTape(posts, start, end);
-                        resolve();
+                        resolve(posts);
+                    } 
+                    else {
+                    	reject();
                     }
                 };
                 xml.send(res);
@@ -46,6 +47,33 @@ let Controller = (function() {
         	});
         },
 
+        findIndex: function (id) {
+            return new Promise(function (resolve, reject) {
+                let xml = new XMLHttpRequest(), ind;
+                xml.open("GET", ("http://localhost:3000/findIndex/" + id), true);
+                xml.onload = function() {
+                    if (xml.status == 200) {
+                        ind = JSON.parse(xml.responseText);
+                        resolve(ind);
+                    }
+                };
+                xml.send(null);
+            });
+        },
+        findPost: function (ind) {
+            return new Promise(function (resolve, reject) {
+                let xml = new XMLHttpRequest();
+                xml.open("GET", ("http://localhost:3000/findPost/" + ind), true);
+                xml.onload = function () {
+                    if (xml.status == 200) {
+                        let post = JSON.parse(xml.responseText);
+                        resolve(post);
+                    }
+                };
+                xml.send(null);
+            });
+        },
+
         addPhotoPost: function(photoPost) {
         	return new Promise(function (resolve, reject) {
         		let xml = new XMLHttpRequest();
@@ -61,7 +89,6 @@ let Controller = (function() {
         				reject();
         			}
                 };
-                console.log(post);
                 xml.send(post);
         	});
         },
@@ -70,11 +97,6 @@ let Controller = (function() {
         	return new Promise(function (resolve, reject) {
         		let xml = new XMLHttpRequest();
         		let res = JSON.stringify(photoPost);
-        		/*var json = JSON.stringify({
-                    id: id,
-                    post: JSON.stringify(post)
-                });*/
-        		
         		xml.open("PUT", "http://localhost:3000/editPost/" + id, true); 
         		xml.setRequestHeader('Content-Type', 'application/json');
 
@@ -104,14 +126,17 @@ let Controller = (function() {
         	});
         },
 
-        getLength: function() {
+        getLength: function(end) {
         	return new Promise(function (resolve, reject) {
         		let xml = new XMLHttpRequest();
         		xml.open("GET", "http://localhost:3000/getSize", true);
 
         		xml.onload = function() {
         			if (xml.status == 200) {
-        				resolve();
+        				if (Number(xml.responseText) > end) 
+               				resolve();
+               			else
+               				reject();
         			}
         			else {
         				reject();
@@ -145,21 +170,14 @@ let Controller = (function() {
                 let xml = new XMLHttpRequest();
                 xml.open("GET", "http://localhost:3000/putLike?id=" + photoPost.id + "&user=" + user, true);
 
-                xml.onload = function () {
+                xml.onload = function() {
                     if (xml.status == 200) {
-                        {
-                            let p = {
-                                num: xml.responseText,
-                                elem: photoPost
-                            };
-                            resolve(p);
-                        }
+                        resolve(xml.responseText);
                     }
                 };
                 xml.send(null);
             });
         }
-
 
    	}
 }());
