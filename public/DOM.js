@@ -1,11 +1,17 @@
 "use strict";
 let DOM = (function() {
     let user = JSON.parse(window.localStorage.getItem("user"));
+    let start = 0, end = 10, link;
+    const fordate = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+    };
+
     let content = document.createElement('div');
-    content.className = 'content';
-    let more = document.createElement('button');
-    more.className = 'more';
-    more.innerHTML = 'Загрузить еще';
+    content.className = 'content';    
     let logIn = document.createElement('button');
     logIn.className = 'prime';
     logIn.innerHTML = 'Войти';
@@ -15,14 +21,23 @@ let DOM = (function() {
     aut.className = 'user';
     document.body.appendChild(container);
     document.body.appendChild(content);
-    const fordate = {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
+    let more = document.createElement('button');
+    more.className = 'more';
+    more.innerHTML = 'Загрузить еще';
+
+    //кнопка загрузить еще
+    more.onclick = function() { 
+        end += 10;
+        start += 10;
+        let makeRequest = async(start, end) => {
+            DOM.showPosts();
+            await Controller.getLength(end);
+        };
+
+        makeRequest(start, end).catch(reject => {
+            content.removeChild(content.lastElementChild);
+        });
     };
-    let start = 0, end = 10;
 
     //Авторизация
     logIn.onclick = function() {
@@ -79,6 +94,7 @@ let DOM = (function() {
         okay.onclick = function() { 
             let user_login = document.getElementById('input_login');    
             let password = document.getElementById('input_password'); 
+            DOM.clearFilter();
             if (password.value && user_login.value) {
                 if (Сlients.validateUser(user_login.value, password.value)) {
                 user = user_login.value;
@@ -97,19 +113,13 @@ let DOM = (function() {
             else {
                 alert("Вы что-то не ввели:(");
             }
-        };        
-
-        document.getElementById('input_author').value = "";
-        document.getElementById('input_start').value = "";
-        document.getElementById('input_end').value = "";
-        document.getElementById('input_hashtags').value = "";       
+        };              
     };
 
    //Фильтр
     let OK = document.getElementById('filter_OK');
     OK.onclick = function() {
-        let data_start;
-        let data_end;
+        let data_start, data_end, mass_hashtags;
         if (document.getElementById('input_start').value === "" ) {
             data_start  = null;
         }
@@ -122,41 +132,42 @@ let DOM = (function() {
         else {
             data_end = document.getElementById('input_end').value + 'T23:59:59';
         }
-        let mass_hashtags;
         if (document.getElementById('input_hashtags').value !== "") {
             mass_hashtags = document.getElementById('input_hashtags').value.split(', ');
         } 
-
         if(document.getElementById('input_start').value !== "" || document.getElementById('input_end').value !== "" || document.getElementById('input_author').value !== "" || document.getElementById('input_hashtags').value !== "") {
             content.innerHTML = "";
-            DOM.showTape(PhotoPortal.getPhotoPosts(0, 20, { 
-                author: document.getElementById('input_author').value,
-                start: new Date(data_start), 
-                end: new Date(data_end),
-                hashTags: mass_hashtags
-            }), 0, 20);
-            content.removeChild(content.lastElementChild);
-            if(!PhotoPortal.getPhotoPosts(0, 10, { 
-                author: document.getElementById('input_author').value,
-                start: new Date(data_start), 
-                end: new Date(data_end),
-                hashTags: mass_hashtags
-            }).length) {
+
+            let makeRequest = async() => {
+                let some_posts = await Controller.getPhotoPosts(start, end, {
+                    author: document.getElementById('input_author').value,
+                    start: new Date(data_start), 
+                    end: new Date(data_end),
+                    hashTags: mass_hashtags
+                });
+
+                DOM.showTape(some_posts, start, end);  
+                if (some_posts.length <= 10) {
+                    content.removeChild(content.lastElementChild);
+                }
+            };
+
+            makeRequest().catch(reject => {
                 let sorry = document.createElement('font');
                 sorry.className = 'hello';
                 sorry.innerHTML = '<br><br><br><br>Извините, мы не нашли таких фотопостов. Проверьте введенные данные:)<br><br><br><br>';
                 content.appendChild(sorry);
-            }
+            });
         }
     }
+
     let cancell = document.getElementById('filter_cancel');
     cancell.onclick = function() {
         content.innerHTML = "";
-        document.getElementById('input_author').value = "";
-        document.getElementById('input_start').value = "";
-        document.getElementById('input_end').value = "";
-        document.getElementById('input_hashtags').value = "";
-        DOM.showTape(PhotoPortal.getPhotoPosts(0, 10), 0, 10);
+        DOM.clearFilter();
+        start = 0;
+        end = 10;
+        DOM.showPosts();
     }
 
     //кнопка добавления фотопоста
@@ -199,22 +210,17 @@ let DOM = (function() {
         inp.type = 'file';
 
         let textFile;
-        let load;
-     /*   inp.onchange = function() {
+        inp.onchange = function() {
             let fileList = this.files;
             textFile = fileList[0];
             let makeRequest = async() => {
-                
-                let load = "" + await Controller.loadFile(textFile);
-                console.log(load);
-                alert(load);
+                link = await Controller.loadFile(textFile);
             };
             makeRequest();
-        };*/
+        };
         
         inp.id = 'photopost_link';
         obl.appendChild(inp);
-
 
         let desc = document.createElement('input');
         desc.className = 'inputs';
@@ -231,7 +237,6 @@ let DOM = (function() {
         p.innerHTML = '<br><br><br>';
         post.appendChild(p);
 
-
         let cancel = document.createElement('button');
         cancel.className = 'prime';
         cancel.innerHTML = 'Отмена';
@@ -242,57 +247,38 @@ let DOM = (function() {
         };
 
         let mass;
-        let okay = document.createElement('button');
-        okay.className = 'prime_right';
-        okay.innerHTML = 'ОК';
-        post.appendChild(okay);
+        let add_okay = document.createElement('button');
+        add_okay.className = 'prime_right';
+        add_okay.innerHTML = 'ОК';
+        post.appendChild(add_okay);
 
         //добавление фотопоста
-        okay.onclick = function() { 
+        add_okay.onclick = function() { 
             let last_id = content.firstElementChild.id;
             last_id++;
             mass = document.getElementById('photopost_hash').value.split(', ');
             let str = document.getElementById('photopost_link').value.split('fakepath')[1];
-
-            let link = "images/";
-            for (let i = 1; i < str.length; i++)
-                link += str[i];
-          //  let link = load;
-            if (link !== "" && document.getElementById('photopost_desc').value !== "") {
-                PhotoPortal.addPhotoPost({
-                    id: last_id + "",
-                    description: document.getElementById('photopost_desc').value,
-                    createdAt: new Date(),
-                    author: user,
-                    photoLink: link,
-                    hashTags: mass,
-                    likes: []
-                }); 
-
-               /* let makeRequest = async() => {
-                    PhotoPortal.addPhotoPost(await Controller.addPhotoPost({
-                        id: last_id,
+                let makeRequest = async() => {
+                   await Controller.addPhotoPost({ 
+                        id: last_id + "",
                         description: document.getElementById('photopost_desc').value,
-                        createdAt: JSON.parse(JSON.stringify(new Date())), //date.innerHTML = photoPost.createdAt.toLocaleString("en-US", fordate);
+                        createdAt: new Date(), 
                         author: user,
                         photoLink: link,
                         hashTags: mass,
                         likes: []
-                    }));
+                    });
+                    form_add.parentNode.removeChild(form_add);
+                    form_add.style.display = "none";
+                    content.innerHTML = "";
+                    start = 0;
+                    end = 10;
+                    DOM.showPosts();
                 };
 
                 makeRequest().catch(reject => {
                     alert("Проверьте введенные данные");
                 });
-               */
-                form_add.parentNode.removeChild(form_add);
-                form_add.style.display = "none";
-                content.innerHTML = "";
-                DOM.showTape(PhotoPortal.getPhotoPosts(0, 10), 0, 10);
-            }
-            else {
-                alert("Проверьте введенные данные");
-            }       
         };        
     };
 
@@ -305,10 +291,7 @@ let DOM = (function() {
         window.localStorage.setItem("user", JSON.stringify(user));
         content.innerHTML = "";
         aut.innerHTML = "";
-        document.getElementById('input_author').value = "";
-        document.getElementById('input_start').value = "";
-        document.getElementById('input_end').value = "";
-        document.getElementById('input_hashtags').value = "";
+        DOM.clearFilter();
         DOM.show();
     };
 
@@ -339,17 +322,6 @@ let DOM = (function() {
                 aut.appendChild(logIn);
                 container.appendChild(aut);
             }
-            DOM.showTape(PhotoPortal.getPhotoPosts(0, 10), 0, 10);
-
-         /*   const makeRequest = async (start, end) => {
-                await Controller.getPhotoPosts(start1, end);
-                alert("gr");
-            };
-
-            makeRequest(start, end).catch(reject => {
-                alert("[p");
-            });*/
-           
         },
         doPhotopost: function(photoPost) {
             let post = document.createElement('div');
@@ -381,7 +353,7 @@ let DOM = (function() {
                 editpic.src = 'images/edit.png';
                 edit.appendChild(editpic);
 
-                //редактирование
+                //кнопка редактирования
                 edit.onclick = function() {
                     let photoID = "";
                     for (let i = 3; i < edit.id.length; i++) {
@@ -413,7 +385,20 @@ let DOM = (function() {
                     obl.innerHTML = 'Выберите файл, если вы хотите изменить старое фото'
                     post.appendChild(obl);
                     let pic = document.createElement('img');
-                    pic.src = PhotoPortal.getPhotoPost(photoID).photoLink;
+
+                    let makeRequest = async() => {
+                        let indexxx = await Controller.findIndex(photoID);
+                        let photopost = await Controller.findPost(indexxx); 
+                        pic.src  = "images/" + photopost.photoLink; 
+                        desc.value = photopost.description;
+                        for (let i = 0; i < photopost.hashTags.length-1; i++) {
+                            hash.value += photopost.hashTags[i] + ', ';
+                        }
+                        hash.value += photopost.hashTags[photopost.hashTags.length-1];
+                    }; 
+
+                    makeRequest();
+                   
                     pic.className = 'photo_edit';
                     obl.appendChild(pic);
                     let b = document.createElement('font');
@@ -422,21 +407,26 @@ let DOM = (function() {
                     let inp = document.createElement('input');
                     inp.type = 'file';
                     inp.id = 'photopost_link';
-                
+                    let textFile;
+                    let link = "images/";
+                    inp.onchange = function() {
+                        let fileList = this.files;
+                        textFile = fileList[0];
+                        let makeRequest = async() => {
+                            link = await Controller.loadFile(textFile);
+                        };
+                        makeRequest();
+                    };
+
                     obl.appendChild(inp);
                     let desc = document.createElement('input');
                     desc.className = 'inputs';
                     desc.id = 'photopost_desc';
-                    desc.value = PhotoPortal.getPhotoPost(photoID).description;
                     post.appendChild(desc);
 
                     let hash = document.createElement('input');
                     hash.className = 'inputs';
                     hash.id = 'photopost_hash';
-                    for (let i = 0; i < PhotoPortal.getPhotoPost(photoID).hashTags.length-1; i++) {
-                        hash.value += PhotoPortal.getPhotoPost(photoID).hashTags[i] + ', ';
-                    }
-                    hash.value += PhotoPortal.getPhotoPost(photoID).hashTags[PhotoPortal.getPhotoPost(photoID).hashTags.length-1];
                     post.appendChild(hash);
                     let p = document.createElement('font');
                     p.innerHTML = '<br><br>';
@@ -455,43 +445,43 @@ let DOM = (function() {
                     okay.className = 'prime_right';
                     okay.innerHTML = 'ОК';
                     post.appendChild(okay);
+
                     //редактируем
                     okay.onclick = function() { 
-                        let link = "images/";
-                        if (document.getElementById('photopost_link').value) {
-                            let str = document.getElementById('photopost_link').value.split('fakepath')[1];
-                            for (let i = 1; i < str.length; i++)
-                                link += str[i];
-                        }
                         let descrip = document.getElementById('photopost_desc').value;
                         let hasht = document.getElementById('photopost_hash').value.split(', ');
-                        if (descrip) {
-                            if (document.getElementById('photopost_link').value) {
-                                PhotoPortal.editPhotoPost( photoID, {
-                                    description: descrip,
-                                    photoLink: link,
-                                    hashTags: hasht
-                                });
-                            }
-                            else {
-                                PhotoPortal.editPhotoPost( photoID, {
-                                    description: descrip,
-                                    hashTags: hasht
-                                });
-                            }
+
+                        let makeRequest = async() => {
+                            if (descrip) {
+                                if (document.getElementById('photopost_link').value) {
+                                    await Controller.editPhotoPost(photoID, {
+                                        description: descrip,
+                                        photoLink: link,
+                                        hashTags: hasht
+                                    });
+                                }
+                                else {
+                                    await Controller.editPhotoPost(photoID, {
+                                        description: descrip,
+                                        hashTags: hasht
+                                    });
+                                }
                             form_add.parentNode.removeChild(form_add);
                             form_add.style.display = "none";
-                            content.innerHTML = "";
-                            DOM.showTape(PhotoPortal.getPhotoPosts(0, 10), 0, 10);
+                            }
+                            else {
+                                 alert("Проверьте введенные данные");
+                             }
+                        };
+                        makeRequest();
+                  
+                        let makeRequest2 = async() => {
+                            let phpost = JSON.parse(await Controller.getPhotoPost(photoID)); 
+                            DOM.editPhotoPost(photoID, phpost);                        
                         }
-                        else {
-                            alert("Проверьте введенные данные");
-                        }                 
+                        makeRequest2();
                     }
-                    document.getElementById('input_author').value = "";
-                    document.getElementById('input_start').value = "";
-                    document.getElementById('input_end').value = "";
-                    document.getElementById('input_hashtags').value = "";
+                    DOM.clearFilter();
                 }
 
                 instr.appendChild(edit);
@@ -499,7 +489,7 @@ let DOM = (function() {
                 p.innerHTML = '<br>';
                 instr.appendChild(p);
 
-                //удаление
+                //кнопка удаления
                 let dodelete = document.createElement('font');
                 dodelete.innerHTML = 'Удалить';
                 dodelete.id = 'del' + post.id;
@@ -530,40 +520,40 @@ let DOM = (function() {
                         form_delete.style.display = "none";
                     };
        
-                    let okay = document.createElement('button');
-                    okay.className = 'prime_right';
-                    okay.innerHTML = 'Да';
-                    cont.appendChild(okay);
-                    okay.onclick = function() { 
+                    let delete_okay = document.createElement('button');
+                    delete_okay.className = 'prime_right';
+                    delete_okay.innerHTML = 'Да';
+                    cont.appendChild(delete_okay);
+
+                    delete_okay.onclick = function() { 
                         let str = "";
                         for (let i = 3; i < dodelete.id.length; i++) {
                             str += dodelete.id.charAt(i);
                         }
-                     /*   const makeRequest = async() => {
+                        let makeRequest = async() => {
                             await Controller.removePhotoPost(str);
-                            window.localStorage.setItem("arrayPhotoPosts", JSON.stringify(photoPosts));
+                            form_delete.parentNode.removeChild(form_delete);
+                            form_delete.style.display = "none";
+                            DOM.removePhotoPost(str);
                         };
-                        makeRequest().catch(reject => {
-                            alert("[p");
-                        });*/
-                        DOM.removePhotoPost(str);
-                        form_delete.parentNode.removeChild(form_delete);
-                        form_delete.style.display = "none";
 
-                    }
-                    
+                        makeRequest().catch(reject => {
+                            alert("чето ошибочка");
+                        });
+                    }     
                 }
+
                 instr.appendChild(dodelete);
                 post.appendChild(instr);
             }
 
-            
             let date = document.createElement('div');
             date.className = 'date';
-            date.innerHTML = photoPost.createdAt.toLocaleString("en-US", fordate);
+            let d = new Date(photoPost.createdAt);
+            date.innerHTML = d.toLocaleString("en-US", fordate);
             post.appendChild(date);
             let photo = document.createElement('img');
-            photo.src = photoPost.photoLink;
+            photo.src = "images/" + photoPost.photoLink;
             photo.alt = 'photo';
             photo.className = 'photoLink';
             post.appendChild(photo);
@@ -600,15 +590,25 @@ let DOM = (function() {
                     for (let i = 4; i < button_like.id.length; i++) {
                         str += button_like.id.charAt(i);
                     }
-                    let this_post = PhotoPortal.getPhotoPost(str);
-                    if (PhotoPortal.putlike(this_post, user)) {
-                        button_like.className = 'pressed_like';
-                        button_like.innerHTML = photoPost.likes.length + '<br>likes';
-                    }
-                    else {
-                        button_like.className = 'like';
-                        button_like.innerHTML = photoPost.likes.length + '<br>likes';
-                    }
+                    
+                    let makeRequest = async() => {
+                        let this_post = JSON.parse(await Controller.getPhotoPost(str));
+                        let q = await Controller.putlike(this_post, user);
+                        button_like.innerHTML = q + '<br>likes';
+                        let found = this_post.likes.find(function(element) {
+                            return element === user;
+                        });
+                        if (found) {
+                            button_like.className = 'like';
+                        }
+                        else {
+                            button_like.className = 'pressed_like';
+                        }  
+                    };
+
+                    makeRequest().catch(reject => {
+                        alert("ошибочка");
+                    });
                 }
             };
             let desc = document.createElement('div');
@@ -628,58 +628,54 @@ let DOM = (function() {
         showTape: function(photoPosts, start, end) {
             if (end !== undefined && start !== undefined) {
                 for (let i = 0; i < (end - start) && i < photoPosts.length; i++) {
-                        content.appendChild(DOM.doPhotopost(photoPosts[i]));
+                    content.appendChild(DOM.doPhotopost(photoPosts[i]));
                 }
                 content.appendChild(more);
-                more.onclick = function() { 
-                    content.removeChild(content.lastElementChild);
-                    var foundIndex = PhotoPortal.getPhotoPosts(0, PhotoPortal.getLength()).findIndex(function(element) {
-                       return element.id === content.lastElementChild.id;
-                    });
-                    content.appendChild(more);
-                    let n = PhotoPortal.getLength();
-                    for (let i = 0; i < 10; i++) {
-                        content.insertBefore(DOM.doPhotopost(PhotoPortal.getPhotoPosts(0, PhotoPortal.getLength())[i+foundIndex+1]), content.lastElementChild);
-                        if(i+foundIndex+1 === n-1)
-                            content.removeChild(content.lastElementChild);
-                    }
-                };
-                
             }
         },
         addPhotoPost: function(photoPost) {
-          if (PhotoPortal.addPhotoPost(photoPost) === true) {
-                   window.localStorage.setItem("arrayPhotoPosts", JSON.stringify(PhotoPortal.photoPosts));
-
             content.insertBefore(DOM.doPhotopost(photoPost), content.firstElementChild);
             content.removeChild(content.lastElementChild);
             content.removeChild(content.lastElementChild);
             content.appendChild(more);
-          }
         },
         removePhotoPost: function(id) {
-          content.removeChild(content.lastElementChild);
-            var foundIndex = PhotoPortal.getPhotoPosts(0, PhotoPortal.getLength()).findIndex(function(element) {
-                return element.id === content.lastElementChild.id;
+            let del = document.getElementById(id);
+            content.removeChild(del);
+            content.removeChild(content.lastElementChild);
+                        
+            let makeRequest = async() => {
+                let index = await Controller.findIndex(content.lastElementChild.id);
+                index++;
+                let photopost = await Controller.findPost(index);
+                content.appendChild(DOM.doPhotopost(photopost));
+               
+                await Controller.getLength(end);
+                content.appendChild(more);              
+            };
+
+            makeRequest().catch(reject => {
             });
-            if (PhotoPortal.removePhotoPost(id) === true) {
-                let del = document.getElementById(id);
-                content.removeChild(del);
-                content.appendChild(more);
-                content.insertBefore(DOM.doPhotopost(PhotoPortal.getPhotoPosts(0, PhotoPortal.getLength())[foundIndex]), content.lastElementChild);
-            }
-            else {
-              content.appendChild(more);
-            }
         },
         editPhotoPost: function(id, photoPost) {
-            if (PhotoPortal.editPhotoPost(id, photoPost) === true) {
-                content.replaceChild(DOM.doPhotopost(PhotoPortal.getPhotoPost(id)), document.getElementById(id));
-            }
+           content.replaceChild(DOM.doPhotopost(photoPost), document.getElementById(id));
+        },
+        showPosts: function() {
+            let makeRequest = async() => {
+                let some_posts = await Controller.getPhotoPosts(start, end);
+                DOM.showTape(some_posts, start, end);          
+            };
+            makeRequest();
+        },
+        clearFilter: function() {
+            document.getElementById('input_author').value = "";
+            document.getElementById('input_start').value = "";
+            document.getElementById('input_end').value = "";
+            document.getElementById('input_hashtags').value = "";
         },
         show: function() {
             DOM.autorizing(user);
-         //   DOM.showTape(PhotoPortal.getPhotoPosts(0, 10), 0, 10);
+            DOM.showPosts();            
         }
     };
 }());
