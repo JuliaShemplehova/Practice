@@ -33,12 +33,37 @@ server.get('/getSize',(req, res) => {
 });
 
 server.get('/putLike', (req, res) => {
-    posts.putlike(posts.getPhotoPost(req.query.id), req.query.user);
+	let q = posts.putlike(posts.getPhotoPost(req.query.id), req.query.user);
+	res.send(String(q));
 	res.status(200).end();
 });
 
+server.get('/findIndex/:id', (req, res) => {
+    let foundIndex = posts.getPhotoPosts(0, posts.getLength()).findIndex(function(element) {
+        return element.id === req.params.id;
+    });
+    if (foundIndex !== -1) {
+        res.send(String(foundIndex));
+        res.status(200).end();
+    }
+    else {
+    	res.status(404).end();
+    }
+});
+
+server.get('/findPost/:index', (req, res) => {
+    let post = posts.getPhotoPosts(0, posts.getLength())[req.params.index];
+    if (post !== undefined) {
+        res.send(post);
+        res.status(200).end();
+    }
+    else {
+    	res.status(404).end();
+    }
+});
+
 server.post('/addPost', (req, res) => {
-	if (posts.addPhotoPost({
+	let post = {
 		id: req.body.id,
         description: req.body.description,
         createdAt: req.body.createdAt,
@@ -46,17 +71,18 @@ server.post('/addPost', (req, res) => {
         photoLink: req.body.photoLink,
         hashTags: req.body.hashTags,
         likes: []
-    }))
+    };
+	if (posts.addPost(post))
 	{
 		res.status(200).end();
 	}
 	else {
-		res.status(406).end();
+		res.status(404).end();
 	}
 });
 
-server.post('uploadImage', upload.single('file'), (req, res) => {
-    fs.writeFile("public/images" + req.file.originalname, req.file.buffer);
+server.post('/uploadImage', upload.single('file'), (req, res) => {
+    fs.writeFile("public/images/" + req.file.originalname, req.file.buffer);
     res.status(200).end();
 });
 
