@@ -1,7 +1,8 @@
 const fs = require('fs');
 let PhotoPortal = (function() {
 let photoPosts = JSON.parse(fs.readFileSync('./server/data/posts.json', 'utf8'), function (key, value) {
-  if (key == 'createdAt') return new Date(value);
+  if (key == 'createdAt') 
+    return new Date(value);
     return value;
 });
 return { 
@@ -20,11 +21,16 @@ return {
     }
     else
     {
+      filterConfig = JSON.parse(filterConfig);
       if ((filterConfig.author !== undefined) && (filterConfig.author !== "") && (typeof filterConfig.author === "string")) {
         copy = copy.filter(function(a) {
           return a.author === filterConfig.author;
         });
       }
+      let st = new Date(filterConfig.start);
+      filterConfig.start = st;
+      let en = new Date(filterConfig.end);
+      filterConfig.end = en;
       if ((filterConfig.start !== undefined) && (filterConfig.start !== "") && (filterConfig.start instanceof Date) && ((filterConfig.end === undefined) || (filterConfig.end === "") || (!filterConfig.end instanceof Date))) {
         copy = copy.filter(function(a) {
           return (a.createdAt - filterConfig.start >= 0); 
@@ -80,46 +86,30 @@ return {
   },
    
   validatePhotoPost: function(photoPost) {
+    let da = new Date(photoPost.createdAt);
+    photoPost.createdAt = da;
     if (photoPost) {
-      if ((photoPost.id) && (photoPost.id !== "") && (typeof photoPost.id === "string")) {
+      if (photoPost.id !== "") {
         let foundIndex = photoPosts.findIndex(function(element) {
           return element.id === photoPost.id;
         });
-      if (foundIndex === -1) {
-        if ((photoPost.description) && (photoPost.description !== "") && (typeof photoPost.description === "string") && (photoPost.description.length < 200)) {
-          if ((photoPost.createdAt) && (photoPost.creatAt !== "") /*&& (photoPost.createdAt instanceof Date)*/) {
-            if ((photoPost.author) && (photoPost.author !== "") && (typeof photoPost.author === "string")) {
-              if ((photoPost.photoLink) && (photoPost.photoLink !== "") && (typeof photoPost.photoLink === "string")) {
-                if (photoPost.likes.length === 0) {
-                  if (!photoPost.hashTags)
-                    return true;
-                  else 
-                  {
-                    if (photoPost.hashTags.length !== 0)
-                      return true;
-                    else
-                      return false;
-                  }
-                  }
-                  else return false;
-                }
-                else return false;
-              }
-              else return false;
+        if (foundIndex === -1) {
+          if ((photoPost.description !== "") && (photoPost.description.length < 200)) {
+            if (photoPost.photoLink !== "") {
+              if (photoPost.likes.length === 0) {
+                return true;
+              }                
             }
-            else return false;
           }
-          else return false;
         }
-        else return false;
       }
-      else return false;
     }
-    else return false;
+   return false;
   },
 
-  addPhotoPost: function(photoPost) {
-    if(PhotoPortal.validatePhotoPost(photoPost)) {
+  addPost: function(photoPost) {
+    if (PhotoPortal.validatePhotoPost(photoPost)) 
+    {
       photoPosts.push(photoPost);
       photoPosts.sort(function(a, b) {
         return b.createdAt - a.createdAt;
@@ -139,13 +129,14 @@ return {
       if (foundIndex !== -1) {
         let post = photoPosts[foundIndex];
         if (photoPost.description) {
-          if ((photoPost.description !== "") && (typeof photoPost.description === "string") && (photoPost.description.length < 200)) {
+          if ((photoPost.description !== "") && (photoPost.description.length < 200)) {
             photoPosts[foundIndex].description = photoPost.description;
           }
-          else return false;
+          else 
+            return false;
         }
         if (photoPost.photoLink) {
-          if ((photoPost.photoLink !== "") && (typeof photoPost.photoLink === "string")) {
+          if (photoPost.photoLink !== "") {
             photoPosts[foundIndex].photoLink = photoPost.photoLink;
           }
           else
