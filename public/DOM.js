@@ -1,5 +1,23 @@
 const DOM = (function () {
-  let user = JSON.parse(window.localStorage.getItem('user'));
+  let user = null;
+  const content = document.createElement('div');
+  content.className = 'content';
+  const aut = document.createElement('div');
+  aut.className = 'user';
+
+  const makeRequestUser = async () => {
+    const cookiesname = await Controller.getUser();
+    user = cookiesname;
+    aut.innerHTML = '';
+    content.innerHTML = '';
+    DOM.autorizing();
+    DOM.showPosts();
+  };
+
+  makeRequestUser().catch(() => {
+    user = null;
+  });
+
   let start = 0;
   let end = 10;
   let link;
@@ -11,15 +29,12 @@ const DOM = (function () {
     minute: 'numeric',
   };
 
-  const content = document.createElement('div');
-  content.className = 'content';
   const logIn = document.createElement('button');
   logIn.className = 'prime';
   logIn.innerHTML = 'Войти';
   const container = document.createElement('div');
   const hello = document.createElement('font');
-  const aut = document.createElement('div');
-  aut.className = 'user';
+
   document.body.appendChild(container);
   document.body.appendChild(content);
   const more = document.createElement('button');
@@ -71,6 +86,7 @@ const DOM = (function () {
     font2.innerHTML = 'Пароль';
     aut_form.appendChild(font2);
     const input2 = document.createElement('input');
+    input2.type = 'password';
     input2.className = 'log';
     input2.id = 'input_password';
     aut_form.appendChild(input2);
@@ -97,18 +113,21 @@ const DOM = (function () {
       const password = document.getElementById('input_password');
       DOM.clearFilter();
       if (password.value && user_login.value) {
-        if (Сlients.validateUser(user_login.value, password.value)) {
-          user = user_login.value;
-          window.localStorage.setItem('user', JSON.stringify(user));
+        const makeRequestAuth = async () => {
+          const nameofuser = await Controller.loginUser(user_login.value, password.value);
           form.style.display = 'none';
           form.parentNode.removeChild(form);
-        } else {
-          alert('Введены неверные данные!');
+          aut.innerHTML = '';
+          content.innerHTML = '';
+          user = nameofuser;
+          DOM.autorizing();
+          DOM.showPosts();
+        };
+
+        makeRequestAuth().catch(() => {
+          alert('Проверьте введенные данные!');
           document.getElementById('input_password').value = null;
-        }
-        content.innerHTML = '';
-        aut.innerHTML = '';
-        DOM.show();
+        });
       } else {
         alert('Вы что-то не ввели:(');
       }
@@ -285,8 +304,11 @@ const DOM = (function () {
   exit.className = 'prime';
   exit.innerHTML = 'Выйти';
   exit.onclick = function () {
+    const makeRequestExit = async () => {
+      await Controller.logoutUser();
+    };
+    makeRequestExit();
     user = null;
-    window.localStorage.setItem('user', JSON.stringify(user));
     content.innerHTML = '';
     aut.innerHTML = '';
     DOM.clearFilter();
@@ -664,7 +686,7 @@ const DOM = (function () {
       document.getElementById('input_hashtags').value = '';
     },
     show: function () {
-      DOM.autorizing(user);
+      DOM.autorizing();
       DOM.showPosts();
     }
   };

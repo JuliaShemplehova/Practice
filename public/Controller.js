@@ -42,6 +42,9 @@ let Controller = (function() {
         			if (xml.status == 200) {
         				resolve(xml.responseText);
         			}
+        			else {
+        				reject();
+        			}
         		};
         		xml.send(null);
         	});
@@ -56,10 +59,14 @@ let Controller = (function() {
                         ind = JSON.parse(xml.responseText);
                         resolve(ind);
                     }
+                    else {
+                    	reject();
+                    }
                 };
                 xml.send(null);
             });
         },
+
         findPost: function (ind) {
             return new Promise(function (resolve, reject) {
                 let xml = new XMLHttpRequest();
@@ -68,6 +75,9 @@ let Controller = (function() {
                     if (xml.status == 200) {
                         let post = JSON.parse(xml.responseText);
                         resolve(post);
+                    }
+                    else {
+                    	reject();
                     }
                 };
                 xml.send(null);
@@ -121,6 +131,9 @@ let Controller = (function() {
                     if (xml.status == 200) {
                         resolve();
                     }
+                    else {
+                    	reject();
+                    }
                 };
                 xml.send(null);
         	});
@@ -133,10 +146,12 @@ let Controller = (function() {
 
         		xml.onload = function() {
         			if (xml.status == 200) {
-        				if (Number(xml.responseText) > end) 
+        				if (Number(xml.responseText) > end) {
                				resolve();
-               			else
+        				}
+               			else {
                				reject();
+               			}
         			}
         			else {
         				reject();
@@ -174,9 +189,68 @@ let Controller = (function() {
                     if (xml.status == 200) {
                         resolve(xml.responseText);
                     }
+                    else {
+                    	reject();
+                    }
                 };
                 xml.send(null);
             });
+        },
+
+        loginUser: function(username, password) {
+        	return new Promise(function (resolve, reject) {
+        		let xml = new XMLHttpRequest();
+        		let message = JSON.stringify({
+        			username: username,
+        			password: password
+        		});
+        		xml.open("POST", "http://localhost:3000/login", true);
+        		xml.setRequestHeader('Content-Type', 'application/json');
+
+        		xml.onload = function() {
+        			if (xml.status == 200) {
+        				resolve(xml.responseText);
+        			}
+        			else {
+        				reject();
+        			}
+        		};
+        		xml.send(message);
+        	});
+        },
+
+        getUser: function() {
+        	return new Promise(function (resolve, reject) {
+        		let xml = new XMLHttpRequest();
+        		xml.open("GET", "http://localhost:3000/login", true);
+
+        		xml.onload = function() {
+        			if (xml.status == 200) {
+        				resolve(xml.responseText);
+        			}
+        			else {
+        				reject();
+        			}
+        		};
+        		xml.send();
+        	});
+        },
+
+        logoutUser: function() {
+        	return new Promise(function (resolve, reject) {
+        		let xml = new XMLHttpRequest();
+        		xml.open("GET", "http://localhost:3000/logout", true);
+
+        		xml.onload = function() {
+        			if (xml.status == 200) {
+        				resolve(xml.responseText);
+        			}
+        			else {
+        				reject();
+        			}
+        		};
+        		xml.send();
+        	});
         }
 
    	}
