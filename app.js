@@ -5,8 +5,24 @@ const multer = require('multer');
 
 const upload = multer();
 const server = express();
+
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const passport = require('./passport');
+
 server.use(parser.json());
 server.use(express.static('public'));
+server.use(parser.urlencoded({ extended: false }));
+
+server.use(cookieParser());
+server.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { secure: false },
+}));
+server.use(passport.initialize());
+server.use(passport.session());
 
 const posts = require('./server/data/functions.js');
 
@@ -109,6 +125,26 @@ server.put('/editPost/:id', (req, res) => {
   } else {
     res.status(404).end();
   }
+});
+
+server.post('/login', passport.authenticate('local'), (req, res) => {
+  res.send(req.user.username);
+});
+
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.status(404).end();
+}
+
+server.get('/login', ensureAuthenticated, (req, res) => {
+  res.send(req.user.username);
+});
+
+server.get('/logout', (req, res) => {
+  req.logout();
+  res.end();
 });
 
 server.listen(3000, () => {
