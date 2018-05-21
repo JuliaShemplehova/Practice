@@ -2,31 +2,32 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const bcrypt = require('bcryptjs');
 const fs = require('fs');
+const Authorization = require("./server/data/authorization.js");
 
-const users = JSON.parse(fs.readFileSync('./server/data/users.json', 'utf8'));
-
-const newUsers = [];
-for (let i = 0; i < users.length; i++) {
-  bcrypt.genSalt(10, function (err, salt) {
-    bcrypt.hash(users[i]["password"], salt, function (err, hash) {
-      let newUser = {
-        username: users[i]["login"],
-        password: hash,
-      };
-      newUsers.push(newUser);
-    });
-  });
-}
-
-passport.use(new LocalStrategy(function (username, password, done) {
-  const user = newUsers.find(k => k.username === username);
-  if (user === undefined) {
-    done(null, false);
-  }
-  if (bcrypt.compareSync(password, user.password)) 
+passport.use(new LocalStrategy((username, password, done) => {
+  const newId = String(Number(Authorization.getLastId()) + 1);
+  const user = { 
+    id: newId,
+    username: username 
+  };
+  const newPassword = bcrypt.hashSync(password, bcrypt.genSaltSync(10));
+  const newUser = { 
+    id: newId,
+    username: username,
+    password: newPassword 
+  };
+  if (Authorization.addUser(newUser)) {
     done(null, user);
-  else 
-    done(null, false);
+  } else {
+    const us = Authorization.getUser(username);
+    if (us !== undefined) {
+      if (bcrypt.compareSync(password, us.password)) {
+        done(null, user);
+      } else done(null, false);
+    } else {
+      done(null, false);
+    }
+  }
 }));
 
 passport.serializeUser(function (user, done) {
