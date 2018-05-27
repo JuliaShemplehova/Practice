@@ -5,8 +5,8 @@ const Authorization = (function () {
   return {
     getUser(login) {
       if (login !== null) {
-        const index = users.findIndex(elem => elem.username === login);
-        return users[index];
+        const findIndex = users.findIndex(elem => elem.username === login);
+        return users[findIndex];
       } 
       return undefined;
     },
