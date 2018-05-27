@@ -27,9 +27,11 @@ server.use(passport.session());
 const posts = require('./server/data/functions.js');
 
 server.get('/allPosts', (req, res) => {
-  const photoposts = posts.getPhotoPosts(0, posts.getLength());
-  if (photoposts.length) {
-    res.send(photoposts);
+  if (req.user) {
+    const photoposts = posts.getPhotoPosts(0, posts.getLength());
+    if (photoposts.length) {
+      res.send(photoposts);
+    } else res.status(404).end();
   } else res.status(404).end();
 });
 
@@ -41,9 +43,11 @@ server.post('/getPosts', (req, res) => {
 });
 
 server.get('/getPost/:id', (req, res) => {
-  const post = posts.getPhotoPost(req.params.id);
-  if (post) {
-    res.send(post);
+  if (req.user) {
+    const post = posts.getPhotoPost(req.params.id);
+    if (post) {
+      res.send(post);
+    } else res.status(404).end();
   } else res.status(404).end();
 });
 
