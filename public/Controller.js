@@ -232,7 +232,7 @@ let Controller = (function() {
         				reject();
         			}
         		};
-        		xml.send();
+        		xml.send(null);
         	});
         },
 
@@ -249,7 +249,7 @@ let Controller = (function() {
         				reject();
         			}
         		};
-        		xml.send();
+        		xml.send(null);
         	});
         }
 
